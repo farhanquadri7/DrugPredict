@@ -56,16 +56,16 @@ Trained on **231 GLP-1 clinical trial arms** from ClinicalTrials.gov:
 
 | Metric | Value |
 |--------|-------|
-| Regression RMSE | ±0.479% ΔHbA1c |
-| Regression R² | 0.305 |
-| Classification AUC-ROC | 0.854 |
+| Regression RMSE | ±0.488% ΔHbA1c |
+| Regression R² | 0.453 |
+| Classification AUC-ROC | 0.830 |
 | Train/test split | GroupShuffleSplit by trial ID (prevents leakage) |
 
 **Key SHAP findings:**
-- `age` and `baseline_hba1c` are the top two predictors — higher baseline HbA1c → larger predicted reduction
-- `has_obesity` is the only comorbidity with meaningful signal
-- Tirzepatide fingerprint bits rank highest among molecular features, reflecting its dual GIP/GLP-1 mechanism
-- ADMET properties (intestinal permeability, skin reaction) contribute moderate signal beyond demographics
+-  Age and baseline HbA1c are the two most important features overall — patients with higher baseline HbA1c tend to show larger reductions, consistent with clinical literature
+-  Obesity flag is the only comorbidity that contributes meaningfully to predictions
+-  Weight (kg), BMI, and diabetes duration highlight key influential patient characteristics
+-  ADMET properties — particularly skin reaction potential (Skin_Reaction) and intestinal permeability (Caco-2) — contribute moderate but consistent signal beyond patient demographics
 
 ---
 
