@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrugPredict — Informed Drug Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09100f;
+    --bg2: #0e1a18;
+    --bg3: #132320;
+    --surface: #152e2a;
+    --border: rgba(100,210,185,0.12);
+    --border-soft: rgba(100,210,185,0.06);
+    --teal: #4fd1b5;
+    --teal-dim: #2a9e87;
+    --teal-glow: rgba(79,209,181,0.15);
+    --amber: #e8c97a;
+    --text: #e8f0ee;
+    --text-muted: #7fa89e;
+    --text-dim: #4a706a;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'Instrument Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --radius: 6px;
+    --max: 1100px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    background: rgba(9,16,15,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--teal); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2.5rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(79,209,181,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(79,209,181,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 70% at 60% 40%, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--teal);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .hero-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .hero-desc {
+    max-width: 560px;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 2.8rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.6rem;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--teal);
+    color: #09100f;
+  }
+
+  .btn-primary:hover {
+    background: #6ee8cf;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--teal);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--teal);
+    background: var(--teal-glow);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border-soft);
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.65s forwards;
+  }
+
+  .stat-val {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    color: var(--teal);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 6rem 2.5rem;
+  }
+
+  .section-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    max-width: 40px;
+    height: 1px;
+    background: var(--teal-dim);
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+  }
+
+  p { color: var(--text-muted); }
+
+  /* ── PROBLEM ── */
+  #problem {
+    background: var(--bg2);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .problem-body p {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .callout p {
+    font-size: 0.95rem;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .problem-numbers {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .num-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.8rem;
+    transition: border-color 0.2s;
+  }
+
+  .num-card:hover { border-color: var(--teal-dim); }
+
+  .num-big {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    color: var(--amber);
+    line-height: 1;
+  }
+
+  .num-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ── APPROACH / PIPELINE ── */
+  #approach { background: var(--bg); }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .pipe-step {
+    background: var(--bg2);
+    padding: 2rem 1.6rem;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .pipe-step:hover { background: var(--bg3); }
+
+  .pipe-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--teal-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .pipe-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .pipe-title {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .pipe-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .pipe-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 0.2rem 0.55rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--teal-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── RESULTS ── */
+  #results {
+    background: var(--bg2);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+
+  .metric-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .metric {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .metric-bar-wrap {
+    flex: 1;
+    height: 5px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .metric-bar {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 3px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .metric-name {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    min-width: 110px;
+  }
+
+  .metric-val {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--teal);
+    min-width: 46px;
+    text-align: right;
+  }
+
+  .shap-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+
+  .shap-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--teal-dim);
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+
+  .shap-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .shap-feat {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-width: 130px;
+  }
+
+  .shap-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .shap-bar {
+    height: 100%;
+    border-radius: 4px;
+    width: 0;
+    transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .shap-val {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* ── TEAM ── */
+  #team { background: var(--bg); }
+
+  .team-grid {
+    display: flex;
+    gap: 2rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .team-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    flex: 1;
+    min-width: 240px;
+    max-width: 320px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .team-card:hover {
+    border-color: var(--teal-dim);
+    transform: translateY(-3px);
+  }
+
+  .team-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--teal);
+    margin-bottom: 1.2rem;
+  }
+
+  .team-name {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .team-role {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--teal-dim);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.8rem;
+  }
+
+  .team-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .team-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--teal);
+    text-decoration: none;
+    margin-top: 1rem;
+    letter-spacing: 0.04em;
+    transition: gap 0.2s;
+  }
+
+  .team-link:hover { gap: 0.6rem; }
+
+  /* ── LINKS ── */
+  #links {
+    background: var(--bg2);
+    border-top: 1px solid var(--border-soft);
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .link-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+  }
+
+  .link-icon {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .link-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .link-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .link-arrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--teal);
+    margin-top: 1.2rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2.5rem 2.5rem;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-left {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .footer-school {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .problem-grid,
+    .results-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+
+    .pipeline { grid-template-columns: 1fr 1fr; }
+
+    .links-grid { grid-template-columns: 1fr; }
+
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { gap: 1.2rem; }
+
+    section { padding: 4rem 1.2rem; }
+    #hero { padding: 7rem 1.2rem 4rem; }
+
+    .hero-stats { gap: 2rem; flex-wrap: wrap; }
+  }
+
+  @media (max-width: 500px) {
+    .pipeline { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">DrugPredict</a>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#links">Links</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">UC Berkeley · MIDS Capstone · 2025</div>
+    <h1><em>Drug</em>Predict</h1>
+    <p class="hero-sub">Informed Drug Development</p>
+    <p class="hero-desc">
+      A machine learning framework for predicting how effective a drug will be across different patient populations — before clinical trials conclude. GLP-1 receptor agonists for Type 2 
+      Diabetes serve as our proof of concept, demonstrating a generalizable approach to personalized drug efficacy prediction.
+    </p>
+    <div class="hero-ctas">
+      <a href="#approach" class="btn btn-primary">Explore the Project →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-val">GLP-1</div>
+        <div class="stat-label">Drug Class</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">XGBoost</div>
+        <div class="stat-label">Core Model</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">SHAP</div>
+        <div class="stat-label">Interpretability</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">T2D</div>
+        <div class="stat-label">Target Disease</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="problem-grid">
+      <div class="problem-body reveal">
+        <div class="section-tag">01 — Problem</div>
+        <h2>Drug development is expensive, slow, and unpredictable</h2>
+        <p>
+          Bringing a new drug to market costs over $2.5 billion on average and takes more than a decade.
+          Despite advances in clinical research, the majority of drug candidates fail in late-stage trials —
+          often due to insufficient understanding of which patient populations will respond to treatment.
+        </p>
+        <p>
+          For GLP-1 receptor agonists in Type 2 Diabetes, this challenge is especially acute.
+          Heterogeneous patient profiles mean that efficacy varies widely, yet traditional trial designs
+          lack the tools to predict responders early and precisely.
+        </p>
+        <div class="callout">
+          <p>"If we can identify patients who will strongly respond to a GLP-1 agonist based on the drug's molecular structure,
+          we can design smarter trials, reduce waste, and get effective treatments to patients faster."</p>
+        </div>
+      </div>
+      <div class="problem-numbers reveal">
+        <div class="num-card">
+          <div class="num-big">$2.5B</div>
+          <div class="num-desc">Average cost to bring a new drug to market</div>
+        </div>
+        <div class="num-card">
+          <div class="num-big">10–15 yr</div>
+          <div class="num-desc">Typical drug development timeline from discovery to approval</div>
+        </div>
+        <div class="num-card">
+          <div class="num-big">&gt;90%</div>
+          <div class="num-desc">Drug candidates that fail in clinical trials</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">02 — Approach</div>
+      <h2>A multi-source ML pipeline for efficacy prediction</h2>
+      <p style="max-width:620px;">
+        We built an end-to-end pipeline combining chemical structure, pharmacokinetic properties,
+        and clinical outcomes data to train and interpret an XGBoost model that predicts
+        GLP-1 agonist response in Type 2 Diabetes patients.
+      </p>
+    </div>
+    <div class="pipeline reveal">
+      <div class="pipe-step">
+        <div class="pipe-num">01</div>
+        <div class="pipe-icon">⬡</div>
+        <div class="pipe-title">Molecular Fingerprints</div>
+        <div class="pipe-desc">Molecular structure fingerprints encoding drug chemical structure as binary feature vectors for ML compatibility.</div>
+        <div class="pipe-tags">
+          <span class="tag">RDKit</span>
+          <span class="tag">ECFP</span>
+          <span class="tag">Morgan</span>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">02</div>
+        <div class="pipe-icon">⚗</div>
+        <div class="pipe-title">ADMET Properties</div>
+        <div class="pipe-desc">Absorption, distribution, metabolism, excretion & toxicity features characterizing pharmacokinetic, physiological behavior.</div>
+        <div class="pipe-tags">
+          <span class="tag">ADMET-AI</span>
+          <span class="tag">SwissADME</span>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">03</div>
+        <div class="pipe-icon">◈</div>
+        <div class="pipe-title">XGBoost Model</div>
+        <div class="pipe-desc">Gradient-boosted trees trained on combined feature sets, tuned with cross-validation for clinical predictive accuracy.</div>
+        <div class="pipe-tags">
+          <span class="tag">XGBoost</span>
+          <span class="tag">scikit-learn</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">04</div>
+        <div class="pipe-icon">◉</div>
+        <div class="pipe-title">SHAP Analysis</div>
+        <div class="pipe-desc">SHapley Additive exPlanations reveal which molecular and ADMET features most influence efficacy predictions.</div>
+        <div class="pipe-tags">
+          <span class="tag">SHAP</span>
+          <span class="tag">interpretability</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">03 — Results</div>
+      <h2>Model performance & key findings</h2>
+      <p style="max-width:580px; margin-bottom:1rem;">
+        Our XGBoost model achieved strong predictive performance across held-out test sets,
+        with SHAP analysis revealing interpretable, clinically meaningful feature drivers.
+      </p>
+    </div>
+    <div class="results-grid">
+      <div class="reveal">
+        <h3 style="margin-bottom:1.5rem; font-size:1rem; font-family:var(--mono); color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase;">Model Metrics</h3>
+        <div class="metric-row">
+          <div class="metric">
+            <span class="metric-name">AUC-ROC</span>
+            <div class="metric-bar-wrap"><div class="metric-bar" data-width="85"></div></div>
+            <span class="metric-val">0.830</span>
+          </div>
+          <div class="metric">
+            <span class="metric-name">R² (Regressor)</span>
+            <div class="metric-bar-wrap"><div class="metric-bar" data-width="31"></div></div>
+            <span class="metric-val">0.435</span>
+          </div>
+          <!-- TODO: Run confusion matrix in notebook to fill in Precision, Recall, F1, Accuracy -->
+          <!-- <div class="metric">
+            <span class="metric-name">Precision</span>
+            <div class="metric-bar-wrap"><div class="metric-bar" data-width="0"></div></div>
+            <span class="metric-val" style="color:var(--text-dim);">—</span>
+          </div>
+          <div class="metric">
+            <span class="metric-name">Recall</span>
+            <div class="metric-bar-wrap"><div class="metric-bar" data-width="0"></div></div>
+            <span class="metric-val" style="color:var(--text-dim);">—</span>
+          </div>
+          <div class="metric">
+            <span class="metric-name">F1 Score</span>
+            <div class="metric-bar-wrap"><div class="metric-bar" data-width="0"></div></div>
+            <span class="metric-val" style="color:var(--text-dim);">—</span>
+          </div> -->
+        </div>
+        <p style="font-size:0.78rem; margin-top:1.5rem; font-family:var(--mono); color:var(--text-dim);">
+          Regressor RMSE: ±0.488% ΔHbA1c · Trained on 231 GLP-1 trial arms (GroupShuffleSplit by trial ID)
+        </p>
+      </div>
+      <div class="reveal">
+        <div class="shap-card">
+          <div class="shap-title">Top SHAP Features — Efficacy Drivers</div>
+          <div class="shap-row">
+            <span class="shap-feat">Age</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--teal);" data-width="100"></div></div>
+            <span class="shap-val">top 1</span>
+          </div>
+          <div class="shap-row">
+            <span class="shap-feat">Baseline HbA1c</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--teal);" data-width="82"></div></div>
+            <span class="shap-val">top 2</span>
+          </div>
+          <div class="shap-row">
+            <span class="shap-feat">Obesity flag</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--teal);" data-width="52"></div></div>
+            <span class="shap-val">top 3</span>
+          </div>
+          <div class="shap-row">
+            <span class="shap-feat">Weight (kg)</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--amber);" data-width="36"></div></div>
+            <span class="shap-val">top 4</span>
+          </div>
+          <div class="shap-row">
+            <span class="shap-feat">BMI</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--amber);" data-width="28"></div></div>
+            <span class="shap-val">top 5</span>
+          </div>
+          <div class="shap-row">
+            <span class="shap-feat">Diabetes duration</span>
+            <div class="shap-bar-wrap"><div class="shap-bar" style="background:var(--amber);" data-width="20"></div></div>
+            <span class="shap-val">top 6</span>
+          </div>
+          <p style="font-size:0.72rem; font-family:var(--mono); color:var(--text-dim); margin-top:1.2rem;">
+            Patient demographics had the most influence, followed by molecular footprints
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">04 — Team</div>
+      <h2>The researchers</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar">F</div>
+        <div class="team-name">Farhan Quadri</div>
+        <div class="team-role">Data Scientist · UC Berkeley MIDS</div>
+        <p class="team-desc">Data scientist with expertise in real-world evidence, longitudinal analysis, and ML for health data. Currently at Abbott analyzing FreeStyle Libre CGM data.</p>
+        <a href="https://www.linkedin.com/in/farhan-quadri-engineer/" class="team-link">LinkedIn →</a>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">K</div>
+        <div class="team-name">Kevin Coppa</div>
+        <div class="team-role">Data Scientist · UC Berkeley MIDS</div>
+        <p class="team-desc">Sr. Data Scientist at Northwell Health.</p>
+        <a href="https://www.linkedin.com/in/kevin-coppa/" class="team-link">LinkedIn →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section id="links">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">05 — Resources</div>
+      <h2>Explore the work</h2>
+    </div>
+    <div class="links-grid reveal">
+      <!-- TODO: Replace with real GitHub repo URL -->
+      <a href="https://github.com/yourusername/DrugPredict" class="link-card">
+        <div class="link-icon">⌥</div>
+        <div class="link-title">GitHub Repository</div>
+        <p class="link-desc">Full source code, notebooks, data pipeline scripts, and model training code. Open source.</p>
+        <div class="link-arrow">View on GitHub →</div>
+      </a>
+      <!-- TODO: Replace href="#" with real slides URL (Google Slides, PDF, etc.) -->
+      <a href="https://docs.google.com/presentation/d/1wJednKzbgFIgXklB2NRbXDRv3Km-9sLX/edit?usp=sharing&ouid=111296815380081159788&rtpof=true&sd=true" class="link-card">
+        <div class="link-icon">◧</div>
+        <div class="link-title">Slide Deck</div>
+        <p class="link-desc">Presentation slides covering the problem, approach, and results from our capstone defense.</p>
+        <div class="link-arrow">View slides →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">© 2025 DrugPredict — UC Berkeley MIDS Capstone</div>
+  <div class="footer-school">School of Information · University of California, Berkeley</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Animate bars when visible
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.metric-bar, .shap-bar').forEach(bar => {
+          const w = bar.dataset.width || bar.getAttribute('data-width') || '0';
+          setTimeout(() => { bar.style.width = w + '%'; }, 200);
+        });
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.metric-row, .shap-card').forEach(el => barObserver.observe(el));
+</script>
+</body>
+</html>
