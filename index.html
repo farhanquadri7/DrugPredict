@@ -746,6 +746,7 @@
     <li><a href="#problem">Problem</a></li>
     <li><a href="#approach">Approach</a></li>
     <li><a href="#results">Results</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
     <li><a href="#team">Team</a></li>
     <li><a href="#links">Links</a></li>
   </ul>
@@ -975,11 +976,94 @@
   </div>
 </section>
 
+<!-- CONCLUSION & FUTURE WORK -->
+<section id="conclusion">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">04 — Conclusion</div>
+      <h2>What we found, and where this goes</h2>
+      <p style="max-width:640px;">
+        DrugPredict demonstrates that combining molecular cheminformatics with real clinical outcomes
+        data can produce a meaningful, interpretable signal for drug efficacy prediction — even at the
+        scale of publicly available trial data.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:3rem;">
+
+      <!-- Conclusion bullets -->
+      <div class="reveal">
+        <h3 style="font-family:var(--mono); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--teal-dim); margin-bottom:1.4rem;">Key Takeaways</h3>
+        <div style="display:flex; flex-direction:column; gap:1.2rem;">
+
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <span style="color:var(--teal); font-family:var(--mono); font-size:0.85rem; margin-top:0.15rem; flex-shrink:0;">01</span>
+            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.7; margin:0;">
+              An AUC-ROC of <span style="color:var(--teal);">0.830</span> shows the classifier reliably separates likely responders from non-responders across held-out trial arms — a strong signal for a proof-of-concept trained on aggregate public data.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <span style="color:var(--teal); font-family:var(--mono); font-size:0.85rem; margin-top:0.15rem; flex-shrink:0;">02</span>
+            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.7; margin:0;">
+              Patient demographics — particularly <span style="color:var(--text);">age</span> and <span style="color:var(--text);">baseline HbA1c</span> — dominate predictions, consistent with clinical literature. The model learned clinically plausible patterns without domain-specific supervision.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <span style="color:var(--teal); font-family:var(--mono); font-size:0.85rem; margin-top:0.15rem; flex-shrink:0;">03</span>
+            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.7; margin:0;">
+              Demonstrated a proof of concept that GLP-1 efficacy is predictable from publicly available data alone. Previous work in this area has been limited to predicting the likelihood of a drug being approved in a clinical trial based on approval rates. We have built upon, improved, and differentiated our project from this previous approach - estimating the impact a drug could actually have on patients.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <span style="color:var(--teal); font-family:var(--mono); font-size:0.85rem; margin-top:0.15rem; flex-shrink:0;">04</span>
+            <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.7; margin:0;">
+              The pipeline generalizes to hypothetical molecules: novel drug candidates designed via RDKit reaction SMARTS can be scored end-to-end using the same inference function, with no retraining required.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Future steps -->
+      <div class="reveal">
+        <h3 style="font-family:var(--mono); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--teal-dim); margin-bottom:1.4rem;">Future Directions</h3>
+        <div style="display:flex; flex-direction:column; gap:1.2rem;">
+
+          <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.4rem;">
+            <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:0.3rem;">Individual patient-level data</div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.6;">Replacing trial-arm averages with individual EHR records would unlock far richer heterogeneity modeling and substantially improve regression R².</p>
+          </div>
+
+          <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.4rem;">
+            <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:0.3rem;">Expanded drug classes</div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.6;">Applying the same pipeline to SGLT-2 inhibitors, DPP-4 inhibitors, or insulin analogs would test generalizability beyond GLP-1 agonists.</p>
+          </div>
+
+          <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.4rem;">
+            <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:0.3rem;">3D molecular representations</div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.6;">Incorporate the sequence of molecular structures — GLP1s are peptides, where the sequence of structures can have varying impacts. Our molecular bits captured local substructures but not the full order of the molecule which matters for GLP-1 effectiveness and could unlock utilizing transformer-based architectures to take into account the dependencies of sequential groups.</p>
+          </div>
+
+          <div style="background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.4rem;">
+            <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:0.3rem;">Prospective clinical validation</div>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.6;">Partnering with a clinical site to prospectively score patients before randomization would provide ground-truth validation of the responder predictions.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- TEAM -->
 <section id="team">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">04 — Team</div>
+      <div class="section-tag">05 — Team</div>
       <h2>The researchers</h2>
     </div>
     <div class="team-grid">
@@ -1005,7 +1089,7 @@
 <section id="links">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">05 — Resources</div>
+      <div class="section-tag">06 — Resources</div>
       <h2>Explore the work</h2>
     </div>
     <div class="links-grid reveal">
